@@ -1,0 +1,10 @@
+{
+  "checked_on": "2026-10-09",
+  "note": "References for protocol/model compatibility; no upstream source is vendored. Review the upstream license at each pinned revision before redistribution.",
+  "repositories": [
+    {"url": "https://github.com/unitreerobotics/unitree_sdk2_python", "revision": "814556d15970dd2ecf1c9984e845ca02ab07e206", "use": "DDS Channel API, HG LowCmd/LowState, CRC; arm motors 15..28 and arm_sdk blending slot 29"},
+    {"url": "https://github.com/unitreerobotics/xr_teleoperate", "revision": "817fb00c63cde15e5f24a0f8fa08e1e33ed89d3b", "use": "G1 arm mapping and Pinocchio-based arm kinematics reference"},
+    {"url": "https://github.com/unitreerobotics/brainco_hand_service", "revision": "d71996b6999edb2f838a3dca3d9621429a2ef966", "use": "Revo2 DDS bridge: six normalized q/dq commands, tau_est reports current in A"},
+    {"url": "https://github.com/unitreerobotics/unitree_ros", "revision": "5994d4faef0a9cadd3287f8de0199a67eeb2a259", "use": "G1 URDF/meshes source; site must select matching 29-DOF variant and add calibrated hand/camera collision models"}
+  ]
+}

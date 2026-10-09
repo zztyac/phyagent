@@ -205,6 +205,8 @@ paos agent
 
 **Physical Execution Skill** 封装工作流及其运行需求。安装环境对应的 Skill、启动其中一个命名 profile 后，即可让 Agent 使用它。
 
+仓库提供 [G1 EDU 中控台实体按键与桌面 Pick / Place 集成](integrations/g1-tabletop/README.md)：无需 VLA，含离线演示、Forge Skill/Node 打包、实机适配与标定说明。实机使用需要完成现场配置和验收。
+
 **1. 为托管 Runtime 安装 Dora**
 
 v1.1.0 沿用 Dora CLI **0.4.1**（`dora-message` **0.7.0**）兼容基线。Linux/macOS：

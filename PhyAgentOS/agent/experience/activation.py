@@ -83,7 +83,8 @@ class SkillActivationManager:
             if installed is not None and verified_extension(installed) is not None:
                 if Path(skill["path"]).resolve() != (installed.bundle_root / "SKILL.md").resolve():
                     raise ValueError("interaction Skill cannot be shadowed by workspace content")
-        content = Path(skill["path"]).read_text(encoding="utf-8")
+        # Forge freezes the document's byte digest; preserve CRLF during activation.
+        content = Path(skill["path"]).read_bytes().decode("utf-8")
         skill_version: str | None = None
         manifest_path = Path(skill["path"]).parent / "skill.yaml"
         if manifest_path.is_file():

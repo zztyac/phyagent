@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "mode": "mock",
+  "calibration_id": "synthetic-v1",
+  "commissioned": false,
+  "limits": {
+    "workspace": {
+      "lower": [
+        0.1,
+        -0.5,
+        0.05
+      ],
+      "upper": [
+        0.8,
+        0.5,
+        0.9
+      ]
+    },
+    "observation_ttl_s": 2.0,
+    "action_timeout_s": 90.0,
+    "cleanup_timeout_s": 30.0,
+    "state_max_age_s": 0.1,
+    "feedback_max_age_s": 0.5,
+    "max_translation_m": 0.8,
+    "max_speed_m_s": 0.08,
+    "joint_speed_rad_s": 0.4,
+    "joint_acceleration_rad_s2": 0.8,
+    "joint_step_rad": 0.008,
+    "joint_tracking_rad": 0.12,
+    "position_tolerance_m": 0.003,
+    "orientation_tolerance_rad": 0.04,
+    "max_local_correction_m": 0.015,
+    "max_local_rotation_rad": 0.1,
+    "body_drift_rad": 0.03,
+    "collision_margin_m": 0.005
+  },
+  "panel_marker": {
+    "marker_id": 0,
+    "size_m": 0.04,
+    "marker_to_target": {
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quaternion_xyzw": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  },
+  "mock_panel_pose": {
+    "position": [
+      0.4,
+      0.0,
+      0.4
+    ],
+    "quaternion_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "buttons": {
+    "button_01": {
+      "label": "Synthetic button 1",
+      "pose_in_panel": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "press_axis_panel": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "precontact_m": 0.03,
+      "travel_m": 0.003,
+      "speed_m_s": 0.01,
+      "dwell_s": 0.0,
+      "settle_s": 0.01,
+      "pointing_posture": "point",
+      "feedback_key": "button_01",
+      "contact_surface": "console",
+      "half_extent_m": [
+        0.008,
+        0.008
+      ]
+    }
+  },
+  "objects": {
+    "block_01": {
+      "label": "Synthetic block",
+      "marker": {
+        "marker_id": 1,
+        "size_m": 0.025,
+        "marker_to_target": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quaternion_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "mock_pose": {
+        "position": [
+          0.4,
+          0.12,
+          0.25
+        ],
+        "quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "approach_axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "pregrasp_m": 0.05,
+      "lift_m": 0.05,
+      "hold_s": 0.01,
+      "open_posture": "open",
+      "close_posture": "pinch",
+      "min_current_a": 0.01,
+      "payload_radius_m": 0.025,
+      "payload_mass_kg": 0.05,
+      "support_surface": "table"
+    }
+  },
+  "placements": {
+    "zone_01": {
+      "marker": {
+        "marker_id": 2,
+        "size_m": 0.04,
+        "marker_to_target": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "quaternion_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "mock_pose": {
+        "position": [
+          0.45,
+          0.15,
+          0.25
+        ],
+        "quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "preplace_m": 0.08,
+      "support_surface": "table"
+    }
+  },
+  "postures": {
+    "point": {
+      "q": [
+        0.5,
+        0.5,
+        0.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "speed": 0.2,
+      "tolerance": 0.01
+    },
+    "open": {
+      "q": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speed": 0.2,
+      "tolerance": 0.01
+    },
+    "pinch": {
+      "q": [
+        0.5,
+        0.5,
+        0.5,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "speed": 0.2,
+      "tolerance": 0.01
+    }
+  },
+  "maintenance_open_posture": "open",
+  "cameras": {},
+  "hardware": null
+}

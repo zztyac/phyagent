@@ -1,0 +1,538 @@
+{
+  "schema_version": 1,
+  "mode": "real",
+  "calibration_id": "REPLACE_AFTER_CALIBRATION",
+  "commissioned": false,
+  "limits": {
+    "workspace": {
+      "lower": [
+        null,
+        null,
+        null
+      ],
+      "upper": [
+        null,
+        null,
+        null
+      ]
+    },
+    "observation_ttl_s": 2.0,
+    "action_timeout_s": 90.0,
+    "cleanup_timeout_s": 30.0,
+    "state_max_age_s": 0.1,
+    "feedback_max_age_s": 0.5,
+    "max_translation_m": 0.8,
+    "max_speed_m_s": 0.08,
+    "joint_speed_rad_s": 0.4,
+    "joint_acceleration_rad_s2": 0.8,
+    "joint_step_rad": 0.008,
+    "joint_tracking_rad": 0.12,
+    "position_tolerance_m": 0.003,
+    "orientation_tolerance_rad": 0.04,
+    "max_local_correction_m": 0.015,
+    "max_local_rotation_rad": 0.1,
+    "body_drift_rad": 0.03,
+    "collision_margin_m": 0.005
+  },
+  "panel_marker": {
+    "marker_id": 0,
+    "size_m": null,
+    "marker_to_target": {
+      "position": [
+        null,
+        null,
+        null
+      ],
+      "quaternion_xyzw": [
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  },
+  "mock_panel_pose": {
+    "position": [
+      0.4,
+      0.0,
+      0.4
+    ],
+    "quaternion_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "buttons": {
+    "button_01": {
+      "label": "REPLACE_WITH_PHYSICAL_BUTTON_NAME",
+      "pose_in_panel": {
+        "position": [
+          null,
+          null,
+          null
+        ],
+        "quaternion_xyzw": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "press_axis_panel": [
+        null,
+        null,
+        null
+      ],
+      "precontact_m": null,
+      "travel_m": null,
+      "speed_m_s": 0.01,
+      "dwell_s": 0.0,
+      "settle_s": 0.01,
+      "pointing_posture": "point",
+      "feedback_key": "button_01",
+      "contact_surface": "console",
+      "half_extent_m": [
+        null,
+        null
+      ]
+    }
+  },
+  "objects": {
+    "block_01": {
+      "label": "REPLACE_WITH_OBJECT_NAME",
+      "marker": {
+        "marker_id": 1,
+        "size_m": null,
+        "marker_to_target": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "mock_pose": {
+        "position": [
+          0.4,
+          0.12,
+          0.25
+        ],
+        "quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "approach_axis": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "pregrasp_m": 0.05,
+      "lift_m": 0.05,
+      "hold_s": 0.01,
+      "open_posture": "open",
+      "close_posture": "pinch",
+      "min_current_a": null,
+      "payload_radius_m": null,
+      "payload_mass_kg": null,
+      "support_surface": "table"
+    }
+  },
+  "placements": {
+    "zone_01": {
+      "marker": {
+        "marker_id": 2,
+        "size_m": null,
+        "marker_to_target": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "mock_pose": {
+        "position": [
+          0.45,
+          0.15,
+          0.25
+        ],
+        "quaternion_xyzw": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "preplace_m": 0.08,
+      "support_surface": "table"
+    }
+  },
+  "postures": {
+    "point": {
+      "q": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "speed": 0.2,
+      "tolerance": 0.01
+    },
+    "open": {
+      "q": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "speed": 0.2,
+      "tolerance": 0.01
+    },
+    "pinch": {
+      "q": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "speed": 0.2,
+      "tolerance": 0.01
+    }
+  },
+  "maintenance_open_posture": "open",
+  "cameras": {
+    "head": {
+      "serial": null,
+      "parent": "base",
+      "parent_to_camera": {
+        "position": [
+          null,
+          null,
+          null
+        ],
+        "quaternion_xyzw": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "width": 640,
+      "height": 480,
+      "fps": 30,
+      "max_timestamp_skew_s": 0.04,
+      "reprojection_error_px": 2
+    },
+    "left_wrist": {
+      "serial": null,
+      "parent": "left_wrist",
+      "parent_to_camera": {
+        "position": [
+          null,
+          null,
+          null
+        ],
+        "quaternion_xyzw": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "width": 640,
+      "height": 480,
+      "fps": 30,
+      "max_timestamp_skew_s": 0.04,
+      "reprojection_error_px": 2
+    },
+    "right_wrist": {
+      "serial": null,
+      "parent": "right_wrist",
+      "parent_to_camera": {
+        "position": [
+          null,
+          null,
+          null
+        ],
+        "quaternion_xyzw": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "width": 640,
+      "height": 480,
+      "fps": 30,
+      "max_timestamp_skew_s": 0.04,
+      "reprojection_error_px": 2
+    }
+  },
+  "hardware": {
+    "interface": null,
+    "domain_id": 0,
+    "arm_topic": "rt/arm_sdk",
+    "firmware_id": null,
+    "brainco_model": "revo2",
+    "urdf": null,
+    "urdf_sha256": null,
+    "mesh_directory": null,
+    "srdf": null,
+    "srdf_sha256": null,
+    "wrist_frames": {
+      "left": null,
+      "right": null
+    },
+    "wrist_to_tcp": {
+      "left": {
+        "point": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "grasp": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "right": {
+        "point": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "grasp": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "reference_body_q": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "reference_imu_wxyz": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "kp": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "kd": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "torque_limit_nm": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "joint_lower_rad": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "joint_upper_rad": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "control_hz": 250,
+    "hand_current_limit_a": null,
+    "feedback_url": null,
+    "feedback_source": null,
+    "environment": [
+      {
+        "name": "console",
+        "pose": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "size_m": [
+          null,
+          null,
+          null
+        ]
+      },
+      {
+        "name": "table",
+        "pose": {
+          "position": [
+            null,
+            null,
+            null
+          ],
+          "quaternion_xyzw": [
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        "size_m": [
+          null,
+          null,
+          null
+        ]
+      }
+    ],
+    "wrist_envelopes": {
+      "left": [
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ],
+      "right": [
+        [
+          null,
+          null,
+          null,
+          null
+        ]
+      ]
+    },
+    "contact_tip_radius_m": null
+  }
+}

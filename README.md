@@ -206,6 +206,8 @@ Reported task success rates on **LIBERO-Long**, **RoboDojo**, and **RoboTwin**. 
 
 A **Physical Execution Skill** packages a workflow and its runtime requirements. Install the Skill for your environment, start one of its named profiles, then ask the Agent to use it.
 
+The repository includes a [G1 EDU physical console-button and tabletop pick/place integration](integrations/g1-tabletop/README.md), with a VLA-free offline demo, Forge Skill/Node packaging, hardware adapters and commissioning instructions. Physical deployment requires site calibration and validation.
+
 **1. Install Dora for managed runtimes**
 
 v1.1.0 retains the Dora CLI **0.4.1** (`dora-message` **0.7.0**) compatibility baseline. On Linux/macOS:

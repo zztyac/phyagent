@@ -26,3 +26,6 @@ SECURITY.md
 uv.lock
 plan/
 external/
+.coverage
+htmlcov/
+.ruff_cache/

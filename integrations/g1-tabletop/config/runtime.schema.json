@@ -1,0 +1,1003 @@
+{
+  "$defs": {
+    "Bounds": {
+      "additionalProperties": false,
+      "properties": {
+        "lower": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Lower",
+          "type": "array"
+        },
+        "upper": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Upper",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lower",
+        "upper"
+      ],
+      "title": "Bounds",
+      "type": "object"
+    },
+    "Button": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "pose_in_panel": {
+          "$ref": "#/$defs/Pose"
+        },
+        "press_axis_panel": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Press Axis Panel",
+          "type": "array"
+        },
+        "precontact_m": {
+          "exclusiveMinimum": 0,
+          "title": "Precontact M",
+          "type": "number"
+        },
+        "travel_m": {
+          "exclusiveMinimum": 0,
+          "title": "Travel M",
+          "type": "number"
+        },
+        "speed_m_s": {
+          "exclusiveMinimum": 0,
+          "title": "Speed M S",
+          "type": "number"
+        },
+        "dwell_s": {
+          "default": 0.15,
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Dwell S",
+          "type": "number"
+        },
+        "settle_s": {
+          "default": 0.5,
+          "exclusiveMinimum": 0,
+          "title": "Settle S",
+          "type": "number"
+        },
+        "pointing_posture": {
+          "default": "point",
+          "title": "Pointing Posture",
+          "type": "string"
+        },
+        "feedback_key": {
+          "minLength": 1,
+          "title": "Feedback Key",
+          "type": "string"
+        },
+        "contact_surface": {
+          "default": "console",
+          "title": "Contact Surface",
+          "type": "string"
+        },
+        "half_extent_m": {
+          "default": [
+            0.008,
+            0.008
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            }
+          ],
+          "title": "Half Extent M",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "pose_in_panel",
+        "press_axis_panel",
+        "precontact_m",
+        "travel_m",
+        "speed_m_s",
+        "feedback_key"
+      ],
+      "title": "Button",
+      "type": "object"
+    },
+    "Camera": {
+      "additionalProperties": false,
+      "properties": {
+        "serial": {
+          "minLength": 1,
+          "title": "Serial",
+          "type": "string"
+        },
+        "parent": {
+          "enum": [
+            "base",
+            "left_wrist",
+            "right_wrist"
+          ],
+          "title": "Parent",
+          "type": "string"
+        },
+        "parent_to_camera": {
+          "$ref": "#/$defs/Pose"
+        },
+        "width": {
+          "default": 640,
+          "maximum": 1920,
+          "minimum": 320,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 480,
+          "maximum": 1080,
+          "minimum": 240,
+          "title": "Height",
+          "type": "integer"
+        },
+        "fps": {
+          "default": 30,
+          "enum": [
+            15,
+            30
+          ],
+          "title": "Fps",
+          "type": "integer"
+        },
+        "max_timestamp_skew_s": {
+          "default": 0.04,
+          "exclusiveMinimum": 0,
+          "title": "Max Timestamp Skew S",
+          "type": "number"
+        },
+        "reprojection_error_px": {
+          "default": 2,
+          "exclusiveMinimum": 0,
+          "title": "Reprojection Error Px",
+          "type": "number"
+        }
+      },
+      "required": [
+        "serial",
+        "parent",
+        "parent_to_camera"
+      ],
+      "title": "Camera",
+      "type": "object"
+    },
+    "CollisionBox": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "size_m": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            }
+          ],
+          "title": "Size M",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "pose",
+        "size_m"
+      ],
+      "title": "CollisionBox",
+      "type": "object"
+    },
+    "HandPosture": {
+      "additionalProperties": false,
+      "properties": {
+        "q": {
+          "maxItems": 6,
+          "minItems": 6,
+          "prefixItems": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            }
+          ],
+          "title": "Q",
+          "type": "array"
+        },
+        "speed": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Speed",
+          "type": "number"
+        },
+        "tolerance": {
+          "default": 0.01,
+          "exclusiveMinimum": 0,
+          "maximum": 0.05,
+          "title": "Tolerance",
+          "type": "number"
+        }
+      },
+      "required": [
+        "q",
+        "speed"
+      ],
+      "title": "HandPosture",
+      "type": "object"
+    },
+    "Hardware": {
+      "additionalProperties": false,
+      "properties": {
+        "interface": {
+          "minLength": 1,
+          "title": "Interface",
+          "type": "string"
+        },
+        "domain_id": {
+          "default": 0,
+          "maximum": 232,
+          "minimum": 0,
+          "title": "Domain Id",
+          "type": "integer"
+        },
+        "arm_topic": {
+          "const": "rt/arm_sdk",
+          "default": "rt/arm_sdk",
+          "title": "Arm Topic",
+          "type": "string"
+        },
+        "firmware_id": {
+          "minLength": 1,
+          "title": "Firmware Id",
+          "type": "string"
+        },
+        "brainco_model": {
+          "const": "revo2",
+          "title": "Brainco Model",
+          "type": "string"
+        },
+        "urdf": {
+          "minLength": 1,
+          "title": "Urdf",
+          "type": "string"
+        },
+        "urdf_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Urdf Sha256",
+          "type": "string"
+        },
+        "mesh_directory": {
+          "minLength": 1,
+          "title": "Mesh Directory",
+          "type": "string"
+        },
+        "srdf": {
+          "minLength": 1,
+          "title": "Srdf",
+          "type": "string"
+        },
+        "srdf_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Srdf Sha256",
+          "type": "string"
+        },
+        "wrist_frames": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "left",
+              "right"
+            ]
+          },
+          "title": "Wrist Frames",
+          "type": "object"
+        },
+        "wrist_to_tcp": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "$ref": "#/$defs/Pose"
+            },
+            "propertyNames": {
+              "enum": [
+                "point",
+                "grasp"
+              ]
+            },
+            "type": "object"
+          },
+          "propertyNames": {
+            "enum": [
+              "left",
+              "right"
+            ]
+          },
+          "title": "Wrist To Tcp",
+          "type": "object"
+        },
+        "reference_body_q": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 15,
+          "minItems": 15,
+          "title": "Reference Body Q",
+          "type": "array"
+        },
+        "reference_imu_wxyz": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Reference Imu Wxyz",
+          "type": "array"
+        },
+        "kp": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          "maxItems": 14,
+          "minItems": 14,
+          "title": "Kp",
+          "type": "array"
+        },
+        "kd": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          "maxItems": 14,
+          "minItems": 14,
+          "title": "Kd",
+          "type": "array"
+        },
+        "torque_limit_nm": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "number"
+          },
+          "maxItems": 14,
+          "minItems": 14,
+          "title": "Torque Limit Nm",
+          "type": "array"
+        },
+        "joint_lower_rad": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 14,
+          "minItems": 14,
+          "title": "Joint Lower Rad",
+          "type": "array"
+        },
+        "joint_upper_rad": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 14,
+          "minItems": 14,
+          "title": "Joint Upper Rad",
+          "type": "array"
+        },
+        "control_hz": {
+          "default": 250,
+          "maximum": 250,
+          "minimum": 50,
+          "title": "Control Hz",
+          "type": "integer"
+        },
+        "hand_current_limit_a": {
+          "exclusiveMinimum": 0,
+          "title": "Hand Current Limit A",
+          "type": "number"
+        },
+        "feedback_url": {
+          "pattern": "^https?://",
+          "title": "Feedback Url",
+          "type": "string"
+        },
+        "feedback_source": {
+          "minLength": 1,
+          "title": "Feedback Source",
+          "type": "string"
+        },
+        "environment": {
+          "items": {
+            "$ref": "#/$defs/CollisionBox"
+          },
+          "minItems": 1,
+          "title": "Environment",
+          "type": "array"
+        },
+        "wrist_envelopes": {
+          "additionalProperties": {
+            "items": {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "propertyNames": {
+            "enum": [
+              "left",
+              "right"
+            ]
+          },
+          "title": "Wrist Envelopes",
+          "type": "object"
+        },
+        "contact_tip_radius_m": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Tip Radius M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "interface",
+        "firmware_id",
+        "brainco_model",
+        "urdf",
+        "urdf_sha256",
+        "mesh_directory",
+        "srdf",
+        "srdf_sha256",
+        "wrist_frames",
+        "wrist_to_tcp",
+        "reference_body_q",
+        "reference_imu_wxyz",
+        "kp",
+        "kd",
+        "torque_limit_nm",
+        "joint_lower_rad",
+        "joint_upper_rad",
+        "hand_current_limit_a",
+        "feedback_url",
+        "feedback_source",
+        "environment",
+        "wrist_envelopes",
+        "contact_tip_radius_m"
+      ],
+      "title": "Hardware",
+      "type": "object"
+    },
+    "Limits": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace": {
+          "$ref": "#/$defs/Bounds"
+        },
+        "observation_ttl_s": {
+          "default": 2.0,
+          "exclusiveMinimum": 0,
+          "title": "Observation Ttl S",
+          "type": "number"
+        },
+        "action_timeout_s": {
+          "default": 90,
+          "exclusiveMinimum": 0,
+          "title": "Action Timeout S",
+          "type": "number"
+        },
+        "cleanup_timeout_s": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Cleanup Timeout S",
+          "type": "number"
+        },
+        "state_max_age_s": {
+          "default": 0.1,
+          "exclusiveMinimum": 0,
+          "title": "State Max Age S",
+          "type": "number"
+        },
+        "feedback_max_age_s": {
+          "default": 0.5,
+          "exclusiveMinimum": 0,
+          "title": "Feedback Max Age S",
+          "type": "number"
+        },
+        "max_translation_m": {
+          "default": 0.8,
+          "exclusiveMinimum": 0,
+          "title": "Max Translation M",
+          "type": "number"
+        },
+        "max_speed_m_s": {
+          "default": 0.08,
+          "exclusiveMinimum": 0,
+          "title": "Max Speed M S",
+          "type": "number"
+        },
+        "joint_speed_rad_s": {
+          "default": 0.4,
+          "exclusiveMinimum": 0,
+          "title": "Joint Speed Rad S",
+          "type": "number"
+        },
+        "joint_acceleration_rad_s2": {
+          "default": 0.8,
+          "exclusiveMinimum": 0,
+          "title": "Joint Acceleration Rad S2",
+          "type": "number"
+        },
+        "joint_step_rad": {
+          "default": 0.008,
+          "exclusiveMinimum": 0,
+          "title": "Joint Step Rad",
+          "type": "number"
+        },
+        "joint_tracking_rad": {
+          "default": 0.12,
+          "exclusiveMinimum": 0,
+          "title": "Joint Tracking Rad",
+          "type": "number"
+        },
+        "position_tolerance_m": {
+          "default": 0.003,
+          "exclusiveMinimum": 0,
+          "title": "Position Tolerance M",
+          "type": "number"
+        },
+        "orientation_tolerance_rad": {
+          "default": 0.04,
+          "exclusiveMinimum": 0,
+          "title": "Orientation Tolerance Rad",
+          "type": "number"
+        },
+        "max_local_correction_m": {
+          "default": 0.015,
+          "exclusiveMinimum": 0,
+          "title": "Max Local Correction M",
+          "type": "number"
+        },
+        "max_local_rotation_rad": {
+          "default": 0.1,
+          "exclusiveMinimum": 0,
+          "title": "Max Local Rotation Rad",
+          "type": "number"
+        },
+        "body_drift_rad": {
+          "default": 0.03,
+          "exclusiveMinimum": 0,
+          "title": "Body Drift Rad",
+          "type": "number"
+        },
+        "collision_margin_m": {
+          "default": 0.005,
+          "exclusiveMinimum": 0,
+          "title": "Collision Margin M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "workspace"
+      ],
+      "title": "Limits",
+      "type": "object"
+    },
+    "Marker": {
+      "additionalProperties": false,
+      "properties": {
+        "marker_id": {
+          "exclusiveMaximum": 50,
+          "minimum": 0,
+          "title": "Marker Id",
+          "type": "integer"
+        },
+        "size_m": {
+          "exclusiveMinimum": 0,
+          "title": "Size M",
+          "type": "number"
+        },
+        "marker_to_target": {
+          "$ref": "#/$defs/Pose"
+        }
+      },
+      "required": [
+        "marker_id",
+        "size_m"
+      ],
+      "title": "Marker",
+      "type": "object"
+    },
+    "ObjectProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "marker": {
+          "$ref": "#/$defs/Marker"
+        },
+        "mock_pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "approach_axis": {
+          "default": [
+            0,
+            0,
+            -1
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Approach Axis",
+          "type": "array"
+        },
+        "pregrasp_m": {
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "title": "Pregrasp M",
+          "type": "number"
+        },
+        "lift_m": {
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "maximum": 0.2,
+          "title": "Lift M",
+          "type": "number"
+        },
+        "hold_s": {
+          "default": 0.3,
+          "exclusiveMinimum": 0,
+          "title": "Hold S",
+          "type": "number"
+        },
+        "open_posture": {
+          "default": "open",
+          "title": "Open Posture",
+          "type": "string"
+        },
+        "close_posture": {
+          "default": "pinch",
+          "title": "Close Posture",
+          "type": "string"
+        },
+        "min_current_a": {
+          "default": 0.01,
+          "minimum": 0,
+          "title": "Min Current A",
+          "type": "number"
+        },
+        "payload_radius_m": {
+          "default": 0.025,
+          "exclusiveMinimum": 0,
+          "title": "Payload Radius M",
+          "type": "number"
+        },
+        "payload_mass_kg": {
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "maximum": 0.5,
+          "title": "Payload Mass Kg",
+          "type": "number"
+        },
+        "support_surface": {
+          "default": "table",
+          "title": "Support Surface",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "marker",
+        "mock_pose"
+      ],
+      "title": "ObjectProfile",
+      "type": "object"
+    },
+    "Placement": {
+      "additionalProperties": false,
+      "properties": {
+        "marker": {
+          "$ref": "#/$defs/Marker"
+        },
+        "mock_pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "preplace_m": {
+          "default": 0.08,
+          "exclusiveMinimum": 0,
+          "title": "Preplace M",
+          "type": "number"
+        },
+        "support_surface": {
+          "default": "table",
+          "title": "Support Surface",
+          "type": "string"
+        }
+      },
+      "required": [
+        "marker",
+        "mock_pose"
+      ],
+      "title": "Placement",
+      "type": "object"
+    },
+    "Pose": {
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "default": [
+            0,
+            0,
+            0
+          ],
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Position",
+          "type": "array"
+        },
+        "quaternion_xyzw": {
+          "default": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Quaternion Xyzw",
+          "type": "array"
+        }
+      },
+      "title": "Pose",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "mode": {
+      "default": "mock",
+      "enum": [
+        "mock",
+        "real"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "calibration_id": {
+      "minLength": 1,
+      "title": "Calibration Id",
+      "type": "string"
+    },
+    "commissioned": {
+      "default": false,
+      "title": "Commissioned",
+      "type": "boolean"
+    },
+    "limits": {
+      "$ref": "#/$defs/Limits"
+    },
+    "panel_marker": {
+      "$ref": "#/$defs/Marker"
+    },
+    "mock_panel_pose": {
+      "$ref": "#/$defs/Pose"
+    },
+    "buttons": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Button"
+      },
+      "title": "Buttons",
+      "type": "object"
+    },
+    "objects": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ObjectProfile"
+      },
+      "title": "Objects",
+      "type": "object"
+    },
+    "placements": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Placement"
+      },
+      "title": "Placements",
+      "type": "object"
+    },
+    "postures": {
+      "additionalProperties": {
+        "$ref": "#/$defs/HandPosture"
+      },
+      "title": "Postures",
+      "type": "object"
+    },
+    "maintenance_open_posture": {
+      "default": "open",
+      "title": "Maintenance Open Posture",
+      "type": "string"
+    },
+    "cameras": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Camera"
+      },
+      "title": "Cameras",
+      "type": "object"
+    },
+    "hardware": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Hardware"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "calibration_id",
+    "limits",
+    "panel_marker",
+    "buttons",
+    "objects",
+    "postures"
+  ],
+  "title": "RuntimeConfig",
+  "type": "object"
+}

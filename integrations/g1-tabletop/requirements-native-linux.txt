@@ -1,0 +1,7 @@
+# Pinocchio 3.9 wheel ABI: constrain the separately distributed C++ libraries.
+pin==3.9.0
+coal==3.0.2
+eigenpy==3.12.0
+cmeel-urdfdom==4.0.1
+cmeel-tinyxml2==10.0.0
+numpy==2.3.5

@@ -66,3 +66,17 @@ def test_installed_forge_skill_is_active_when_runtime_is_ready(tmp_path: Path) -
 def test_source_distribution_has_no_concrete_forge_skill_bundle() -> None:
     assert not list(BUILTIN_SKILLS.glob("*/skill.yaml"))
     assert not [path for path in BUILTIN_SKILLS.glob("*/profiles/**/*") if path.is_file()]
+
+
+def test_installed_skill_preserves_bytes_used_by_forge_binding(tmp_path: Path) -> None:
+    import hashlib
+
+    installed = tmp_path / "installed"
+    bundle = installed / "crlf-skill"
+    bundle.mkdir(parents=True)
+    raw = b"---\r\nname: crlf-skill\r\n---\r\n\r\nPreserve the activated document.\r\n"
+    (bundle / "SKILL.md").write_bytes(raw)
+    loader = SkillsLoader(tmp_path / "workspace", installed_skills_dir=installed)
+    content = loader.load_skill("crlf-skill")
+    assert content is not None
+    assert hashlib.sha256(content.encode("utf-8")).digest() == hashlib.sha256(raw).digest()

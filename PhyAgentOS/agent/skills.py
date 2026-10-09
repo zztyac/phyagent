@@ -120,19 +120,21 @@ class SkillsLoader:
             Skill content or None if not found.
         """
         # Check workspace first
+        # Activation hashes this exact content; Forge binding hashes the source bytes.
+        # Universal-newline conversion would reject otherwise unchanged CRLF bundles.
         workspace_skill = self.workspace_skills / name / "SKILL.md"
         if workspace_skill.exists():
-            return workspace_skill.read_text(encoding="utf-8")
+            return workspace_skill.read_bytes().decode("utf-8")
 
         installed_skill = self.installed_skills / name / "SKILL.md"
         if installed_skill.exists():
-            return installed_skill.read_text(encoding="utf-8")
+            return installed_skill.read_bytes().decode("utf-8")
 
         # Check built-in
         if self.builtin_skills:
             builtin_skill = self.builtin_skills / name / "SKILL.md"
             if builtin_skill.exists():
-                return builtin_skill.read_text(encoding="utf-8")
+                return builtin_skill.read_bytes().decode("utf-8")
 
         return None
 
@@ -261,7 +263,7 @@ class SkillsLoader:
     def _strip_frontmatter(self, content: str) -> str:
         """Remove YAML frontmatter from markdown content."""
         if content.startswith("---"):
-            match = re.match(r"^---\n.*?\n---\n", content, re.DOTALL)
+            match = re.match(r"^---\r?\n.*?\r?\n---\r?\n", content, re.DOTALL)
             if match:
                 return content[match.end():].strip()
         return content
@@ -363,7 +365,7 @@ class SkillsLoader:
             return None
 
         if content.startswith("---"):
-            match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+            match = re.match(r"^---\r?\n(.*?)\r?\n---", content, re.DOTALL)
             if match:
                 try:
                     metadata = yaml.safe_load(match.group(1))

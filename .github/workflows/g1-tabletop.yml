@@ -1,0 +1,31 @@
+name: G1 tabletop offline validation
+on:
+  push:
+    paths: ['integrations/g1-tabletop/**', 'PhyAgentOS/**', 'scripts/package_skill.py', '.github/workflows/g1-tabletop.yml']
+  pull_request:
+    paths: ['integrations/g1-tabletop/**', 'PhyAgentOS/**', 'scripts/package_skill.py', '.github/workflows/g1-tabletop.yml']
+jobs:
+  offline-linux:
+    runs-on: ubuntu-22.04
+    env:
+      LITELLM_LOCAL_MODEL_COST_MAP: 'True'
+    strategy:
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '${{ matrix.python }}'
+      - run: python -m pip install -e '.[dev]' -e 'integrations/g1-tabletop[dev,vision]' -r integrations/g1-tabletop/requirements-native-linux.txt
+      - run: python -c "import pinocchio, coal; print(pinocchio.__version__, coal.__version__)"
+      - run: python -m ruff check integrations/g1-tabletop
+      - run: python -m ruff format --check integrations/g1-tabletop
+      - run: python -m pytest integrations/g1-tabletop/tests tests/test_skills.py tests/test_forge_agenttask_integration_v023.py tests/test_interaction_foundation.py --cov=g1_tabletop --cov-report=xml:dist/g1-coverage.xml --junitxml=dist/g1-tests.xml -q
+      - run: python -m g1_tabletop demo
+      - run: python integrations/g1-tabletop/scripts/build_bundle.py --output dist/g1-tabletop --arch x86_64
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: 'g1-offline-${{ matrix.python }}'
+          path: dist/
