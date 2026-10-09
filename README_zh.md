@@ -34,6 +34,8 @@
 
 **PhyAgentOS 是面向具身智能体的递归自进化（RSI）框架。** 它将认知规划、Physical Execution 与任务验证连接为跨 Runtime 的反馈闭环，从经过验证的经验中改进 Skill 与 Lesson，并用于后续任务。
 
+G1 EDU 29 DOF 的实体按键与 Pick/Place 集成：参见 [Linux 部署与真机接入手册](integrations/g1-tabletop/DEPLOYMENT_LINUX.zh-CN.md)和[现场验收记录模板](integrations/g1-tabletop/SITE_ACCEPTANCE.zh-CN.md)。
+
 ![PhyAgentOS 宏观架构：认知规划、物理执行与递归自进化闭环](docs/imgs/runtime-control-modes.png)
 
 <a id="why"></a>

@@ -4,6 +4,8 @@
 
 实现范围是：**已标定中控面板的实体按键，带标记的已知刚性小物体抓取与放置**。左右臂都可选，首次版本串行占用整个双臂工作区，不执行同时双臂协作、移动、叠衣服、任意散乱物体抓取。实机后端已经写入代码，但任何离线测试都不等于用户这台机器人已经完成接机验收。
 
+准备部署到 Linux 并连接真机，请从 [Linux 部署与真机接入手册](DEPLOYMENT_LINUX.zh-CN.md) 开始，并复制填写 [现场部署与验收记录](SITE_ACCEPTANCE.zh-CN.md)。手册包含源码交付、依赖兼容、厂家服务启动行为、标定、真实反馈、API/Skill 接入和故障恢复。
+
 ## 结构与执行闭环
 
 ```mermaid
@@ -126,12 +128,14 @@ Core 使用普通 Forge Actions。未启用尚未完成真实 transport 接入�
 
 ## Linux 实机依赖
 
+以下以新的实机环境为前提；如果已经安装过上面的 `[vision]` extra，请先按 [Linux 手册](DEPLOYMENT_LINUX.zh-CN.md)统一 OpenCV 包，避免与 SDK 安装的 `opencv-python` 共用并覆盖 `cv2` 文件。
+
 ```bash
-python -m pip install -e 'integrations/g1-tabletop[vision]' -r integrations/g1-tabletop/requirements-native-linux.txt pyrealsense2
+python -m pip install -e integrations/g1-tabletop -r integrations/g1-tabletop/requirements-native-linux.txt pyrealsense2 'opencv-python==4.14.0.94'
 python -m pip install 'git+https://github.com/unitreerobotics/unitree_sdk2_python.git@814556d15970dd2ecf1c9984e845ca02ab07e206'
 ```
 
-CycloneDDS 的系统安装、`CYCLONEDDS_HOME`、网卡配置，以及 BrainCo 的 CAN/串口连接与服务进程，按照相应上游说明部署。上述命令不是所有主机都通用的一键硬件安装器。Realsense USB 权限、带宽、供电、D405 视频模式需现场验证。
+CycloneDDS 的系统安装、`CYCLONEDDS_HOME`、网卡配置，以及固定版本 BrainCo 服务的串口 Modbus 连接与服务进程，按照相应上游说明部署。上述命令仅概览依赖；完整安装顺序和 OpenCV 共享 `cv2` 包冲突处理见 [Linux 手册](DEPLOYMENT_LINUX.zh-CN.md)。该 BrainCo 服务固定 DDS domain 0，启动时可能立即移动手指，不是只读服务。RealSense USB 权限、带宽、供电、D405 视频模式需现场验证。
 
 上游仓库与参考提交固定在 [references.lock.json](references.lock.json)，没有把整套遥操作工程复制进 Core。当前实现不要求 ROS；URDF 模型可从 Unitree 仓库选取再补齐现场几何。生产部署应保存最终 Python 依赖快照和标定/固件版本。
 

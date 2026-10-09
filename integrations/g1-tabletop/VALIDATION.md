@@ -29,3 +29,14 @@ Windows 残余 Core 失败涉及 POSIX executable/chmod 和路径假设、符号
 本地完整报告位于忽略的 `dist/`：`g1-windows-tests.xml`、`g1-linux-tests.xml`、`g1-linux-coverage.xml`、`core-final.xml`、`core-linux.xml` 及对应日志。交付构建位于 `dist/g1-tabletop-delivery/`，含 Skill、Linux x86_64 Node、wheel、`index.yaml`。这些产物和虚拟环境未加入 Git；从源码按 README 可重建。
 
 复现 Linux 测试时设置 `LITELLM_LOCAL_MODEL_COST_MAP=True`，使用 LiteLLM 自带价格表，避免无关网络下载影响测试收集。WSL 中依赖下载受环境网络影响，本次通过 Windows 下载 Linux wheel，再在隔离 Linux 环境离线安装；未修改系统 Python。
+
+## Linux 部署手册核对（2026-10-09）
+
+新增 [部署与接机手册](DEPLOYMENT_LINUX.zh-CN.md)和[现场验收记录模板](SITE_ACCEPTANCE.zh-CN.md)，本次仅修改文档：
+
+- 核对固定提交的 Python SDK README/setup、BrainCo README/CMake/参数定义/主程序，明确串口 Modbus、domain 0、启动默认手型和缺少命令新鲜度看门狗的行为。
+- 33 个 Bash 示例通过 Linux `bash -n`；6 段独立或嵌入的 Python 示例通过语法解析，JSON 示例和本地文档链接通过检查。硬件相关示例仅做静态核对，没有运行真实服务或发送硬件命令。
+- 在已有 Ubuntu 22.04 / Python 3.11 环境实际运行手册的 Mock `doctor`、HTTP 观察→按压→结果示例，并确认原请求重试返回同一 invocation。
+- 手册选择单一 `opencv-python==4.14.0.94` 以满足 Unitree SDK 的依赖声明，避免与 contrib/headless 包重叠。独立提取该 Linux wheel，使用现有 NumPy 2.3.5、Pinocchio 3.9.0、coal 环境验证导入、ArUco 生成与检测；没有更改既有测试环境。此项不等于三相机视频流或完整硬件依赖安装验收。
+
+没有重新声称完成 C++ 服务编译、驱动/固件兼容、现场外参、接触力或真机任务验证。仍需按手册完成现场准备和验收。
