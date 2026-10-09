@@ -2,6 +2,8 @@
 
 使用说明：复制本文件到现场资料目录，按一台机器人、一个安装布局、一个配置版本填写。空白表示未完成，不能默认通过。流程和命令见 [Linux 部署与接机手册](DEPLOYMENT_LINUX.zh-CN.md)。此记录中的阈值由现场测量和任务要求决定。
 
+按手册安装后，现场副本默认在 `$HOME/g1-site/logs/site-acceptance.md`，请填写该副本；仓库中的本文件保留为空白模板。副本内相对文档链接可回到 `$HOME/phyagent/integrations/g1-tabletop/` 阅读。每次软件升级另留本记录的版本，关联升级前后的提交和备份，保留历史验收证据。
+
 ## 1. 本次接机范围
 
 | 项目 | 填写 |
@@ -25,13 +27,18 @@
 | --- | --- |
 | 执行主机、CPU 架构、OS、内核 | |
 | Python 版本 / 环境绝对路径 | |
-| 项目分支 / 完整提交 SHA / 是否有未提交改动 | |
+| 源码仓库 / `git remote get-url origin` 实际输出 | 预期 `https://github.com/zztyac/phyagent.git`；实际： |
+| 项目分支 / 完整提交 SHA / 是否有未提交改动 | 预期分支 `codex/g1-console-pick-runtime`；实际： |
+| 首次 clone 日期 / 是否浅克隆 / 源码绝对路径 | 默认 `$HOME/phyagent`；实际： |
+| 现场资料根目录 / 环境文件绝对路径 | 默认 `$HOME/g1-site`、其中的 `config/runtime-env.sh`；实际： |
 | `pip freeze` / `pip check` 输出文件 | |
 | OpenCV 唯一发行包与版本 / ArUco 检查 | |
 | Pin / coal / eigenpy / urdfdom / tinyxml2 / NumPy | |
 | Python SDK2 SHA / CycloneDDS C SHA / Python binding 版本 | |
 | BrainCo 服务 SHA / C++ SDK2 SHA / 库加载结果 | |
 | Dora CLI / dora-rs 版本、daemon 环境 | |
+| 部署方式 | 独立 Gateway / Dora 托管 Skill： |
+| 托管 Skill 版本 / Node artifact ID / 归档 SHA256 / 构建源码 SHA | 未使用则填不适用；不能只记录 checkout 的 HEAD： |
 | 执行主机网卡、IP、子网、DDS domain | |
 | BrainCo 服务所在主机、网卡、串口权限/设备 | |
 | 启动方式、已有自启动、其他 DDS 发布者检查 | |
@@ -39,6 +46,8 @@
 | 配置绝对路径 / SHA256 / calibration_id | |
 | 持久状态目录绝对路径 / 运行用户 | |
 | 日志 / 备份 / 原始图像目录 | |
+| 本次更新前后源码 SHA / 依赖变化 / 备份位置 | 首次安装则填不适用： |
+| 更新后 Mock / 只读检查 / 需重做的现场验收及结论 | |
 
 | 相机角色 | 型号 / 序列号 / 固件 | USB 控制器与端口 | RGB+Depth 模式 | parent / 外参文件 |
 | --- | --- | --- | --- | --- |
@@ -177,7 +186,7 @@ error_code,raw_image_path,raw_feedback_path,log_path,operator_note
 
 | 交付物 | 路径 / 版本 / 负责人 |
 | --- | --- |
-| 源码 bundle/仓库提交 | |
+| 个人仓库 URL / 部署分支 / 完整提交 SHA / clone 命令 | |
 | Skill/Node 归档与索引 | |
 | 系统包、Python 依赖、wheelhouse | |
 | 厂家控制/急停与服务管理说明 | |

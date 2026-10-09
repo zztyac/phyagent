@@ -34,7 +34,7 @@
 
 **PhyAgentOS 是面向具身智能体的递归自进化（RSI）框架。** 它将认知规划、Physical Execution 与任务验证连接为跨 Runtime 的反馈闭环，从经过验证的经验中改进 Skill 与 Lesson，并用于后续任务。
 
-G1 EDU 29 DOF 的实体按键与 Pick/Place 集成：参见 [Linux 部署与真机接入手册](integrations/g1-tabletop/DEPLOYMENT_LINUX.zh-CN.md)和[现场验收记录模板](integrations/g1-tabletop/SITE_ACCEPTANCE.zh-CN.md)。
+当前个人仓库为 [zztyac/phyagent](https://github.com/zztyac/phyagent)，G1 功能位于 `codex/g1-console-pick-runtime` 分支。G1 EDU 29 DOF 的实体按键与 Pick/Place 部署请从 [Linux 部署与真机接入手册](integrations/g1-tabletop/DEPLOYMENT_LINUX.zh-CN.md)开始，并填写[现场验收记录模板](integrations/g1-tabletop/SITE_ACCEPTANCE.zh-CN.md)。通过独立 API 使用 G1 执行层，无须 VLA 或模型 API Key。
 
 ![PhyAgentOS 宏观架构：认知规划、物理执行与递归自进化闭环](docs/imgs/runtime-control-modes.png)
 
@@ -65,13 +65,13 @@ G1 EDU 29 DOF 的实体按键与 Pick/Place 集成：参见 [Linux 部署与真�
 <a id="quick-start"></a>
 ## Quickstart · 如何开始使用
 
-先运行模型驱动的 CLI 对话，再按下文接入机器人或仿真 Skill。**准备：** Python 3.11 或 3.12、Git，以及模型服务的 API Key。
+**部署 G1 请优先按 [Linux 手册](integrations/g1-tabletop/DEPLOYMENT_LINUX.zh-CN.md#linux)操作**，使用 `~/g1-site/venv` 持久环境。下方为可选的通用模型 CLI 快速入门，需要 Python 3.11 或 3.12、Git 和模型服务 API Key。若已经按 G1 手册克隆并安装，继续使用同一环境，跳过下方重复克隆与创建环境的步骤。
 
 ### 1. 安装与初始化
 
 ```bash
-git clone --branch v1.1.0 https://github.com/PhyAgentOS/PhyAgentOS-core.git
-cd PhyAgentOS-core
+git clone --depth 1 --branch codex/g1-console-pick-runtime https://github.com/zztyac/phyagent.git phyagent
+cd phyagent
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .

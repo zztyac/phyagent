@@ -1,6 +1,6 @@
 # G1 Linux 部署与真机接入手册
 
-适用代码：`codex/g1-console-pick-runtime` 分支，G1 运行时基线提交 `f657e3e`；整理日期：2026-10-09。后续修改应同时更新本手册与现场记录。
+源码仓库：[zztyac/phyagent](https://github.com/zztyac/phyagent)，部署分支：[`codex/g1-console-pick-runtime`](https://github.com/zztyac/phyagent/tree/codex/g1-console-pick-runtime)。G1 运行时基线提交 `f657e3e`；本手册更新日期：2026-10-10。每次部署以实际 `git rev-parse HEAD` 为准，将完整提交号写入现场记录。
 
 适用硬件：**Unitree G1 EDU 29 DOF、BrainCo Revo2 六通道左右手、头部 D435i、左右腕 D405**。任务为固定基座下的汽车中控台物理按键和已知刚性小物体 Pick / Place；不使用 VLA。用户目前仅确认 BrainCo 品牌，**实际型号、固件和六通道协议兼容性仍须核实**。
 
@@ -9,18 +9,28 @@
 ## 目录
 
 1. [架构、主机与准备清单](#architecture)
-2. [搬运源码与建立 Linux 环境](#linux)
+2. [从个人仓库克隆与建立 Linux 环境](#linux)
 3. [不接真机的运行验证](#offline)
 4. [Unitree、BrainCo 与三相机](#drivers)
 5. [现场配置、模型与标定](#calibration)
 6. [按键真实反馈](#feedback)
 7. [分阶段接机与 API 操作](#commissioning)
 8. [接入 PhyAgentOS / Dora](#core)
-9. [日常启动、停机与恢复](#operations)
+9. [日常启动、停机、更新与恢复](#operations)
 10. [排查、验收与交付](#acceptance)
 11. [上游资料](#references)
 
 配套可填写文件：[SITE_ACCEPTANCE.zh-CN.md](SITE_ACCEPTANCE.zh-CN.md)。简要坐标说明：[COMMISSIONING.md](COMMISSIONING.md)。完整参数模板：[real.site.template.json](config/real.site.template.json)，字段约束：[runtime.schema.json](config/runtime.schema.json)。
+
+首次部署按以下顺序进行。只做独立 API 按键/抓放任务时，第 8 节为可选项，无须模型 API Key。
+
+| 顺序 | 阅读与执行 | 完成后可做什么 |
+| --- | --- | --- |
+| 1 | 第 2–3 节：clone、安装、Mock | 不接硬件验证按键→抓取→放置的软件链路 |
+| 2 | 第 4–6 节：SDK、设备、配置、模型、标定和反馈 | 准备真实接机所需数据与服务 |
+| 3 | 第 7 节：只读接机→单键→Pick/Place | 逐项验收后使用已配置的真实目标 |
+| 4 | 第 8 节，可选：Dora / Core | 托管 Skill，按需增加文本模型入口 |
+| 5 | 第 9–10 节：运维与验收记录 | 固定可复现版本，按流程更新和恢复 |
 
 <a id="architecture"></a>
 ## 1. 架构、主机与准备清单
@@ -74,59 +84,66 @@ BrainCo 服务部署在**实际插着手部 USB 串口的主机**：可以是执
 尤其要提前确定“按键是否真正触发”的信号来源。项目已实现反馈协议和文件桥，**没有实现你这辆车专属的 CAN/电气/灯态采集驱动**，也没有从照片自动识别所有按钮的功能。
 
 <a id="linux"></a>
-## 2. 搬运源码与建立 Linux 环境
+## 2. 从个人仓库克隆与建立 Linux 环境
 
-### 2.1 将当前分支交付到 Linux
+### 2.1 直接 clone 你的仓库
 
-当前交付目标为个人仓库 [zztyac/phyagent](https://github.com/zztyac/phyagent)，使用 `codex/g1-console-pick-runtime` 分支。该分支推送完成后，可在 Linux 直接获取代码与本手册：
-
-```bash
-git clone --branch codex/g1-console-pick-runtime https://github.com/zztyac/phyagent.git PhyAgentOS-core
-cd PhyAgentOS-core
-git log -1 --oneline
-git status --short
-```
-
-不要仅克隆原始上游仓库并假定它包含本分支。Linux 无法访问 GitHub 时，可以改用下面的 Git bundle 离线交付方式，与上面的在线克隆二选一。
-
-在当前 Windows 仓库中检查 `git status`，将交付所需文件提交到当前分支，再执行：
-
-```powershell
-git bundle create dist/g1-tabletop-source.bundle codex/g1-console-pick-runtime
-git bundle verify dist/g1-tabletop-source.bundle
-```
-
-复制该 bundle 到 Linux 后，在选定目录执行：
+在 Linux 的普通部署用户下执行；`sudo` 只用于系统依赖和需要特权的设备配置。以下将源码放在 `$HOME/phyagent`，该目录应尚不存在：
 
 ```bash
-git clone -b codex/g1-console-pick-runtime /path/to/g1-tabletop-source.bundle PhyAgentOS-core
-cd PhyAgentOS-core
+sudo apt update
+sudo apt install -y git ca-certificates
+cd "$HOME"
+git clone --depth 1 --branch codex/g1-console-pick-runtime https://github.com/zztyac/phyagent.git phyagent
+cd "$HOME/phyagent"
+git remote get-url origin
+git branch --show-current
 git log -1 --oneline
 git status --short
+test -f integrations/g1-tabletop/DEPLOYMENT_LINUX.zh-CN.md
 ```
 
-`/path/to/...` 需替换。bundle 只包含已提交文件；`.venv`、`dist/`、现场配置/模型不会自动随源码交付。不要复制 Windows 虚拟环境到 Linux。
+预期 `origin` 为 `https://github.com/zztyac/phyagent.git`，分支为 `codex/g1-console-pick-runtime`，工作区无改动。`--depth 1` 减少历史文件下载，不影响安装和后续 `git pull --ff-only`。部署无需获取完整历史。
+
+**必须指定该 G1 分支**；原始上游的 `v1.1.0` 标签不包含此集成，不要按上游旧教程切换到该标签。Linux 新 clone 的远程名就是 `origin`，开发电脑使用的 `personal` 远程名不会随 clone 复制，也无需在 Linux 添加。
+
+如果已按上述路径克隆，日后按第 9.6 节更新，不重复 clone 或覆盖目录。GitHub 访问失败先解决执行主机网络；私有仓库使用自己的 GitHub 凭据或 SSH 密钥，不把令牌写入命令、文档或现场配置。
+
+clone 后的交付范围：
+
+| 已在仓库中 | 仍需在 Linux 安装或现场提供 |
+| --- | --- |
+| Core、G1 源码、Mock、测试、配置模板、部署文档 | Python 环境、系统/原生依赖、Unitree / BrainCo SDK 与服务 |
+| Skill/Node 构建脚本、依赖约束、上游参考提交 | 本机重建的 Skill/Node 归档；`dist/` 不在 Git 中 |
+| 标定算法、字段格式、反馈协议及文件桥 | 真实 URDF/mesh/SRDF、相机/TCP 标定、手型/增益、车辆反馈采集器 |
+
+`.venv`、现场配置、模型和执行数据库不会通过 clone 自动获得。不要复制 Windows 虚拟环境到 Linux；本手册以下步骤在 Linux 重新建立环境。
 
 ### 2.2 统一路径约定
 
-后续 Bash 命令以仓库根目录为起点。为避免不同终端落在不同目录，先建立以下约定，后续终端也设置这些变量：
+后续示例均使用 Bash。先建立路径约定；自选安装目录时在这里替换，保持源码和现场数据分开：
 
 ```bash
-export G1_REPO="$PWD"
+export G1_REPO="$HOME/phyagent"
 export G1_SITE="$HOME/g1-site"
+cd "$G1_REPO"
 mkdir -p "$G1_SITE"/{config,models,calibration,feedback,logs,state,backups,upstream}
+cp -n integrations/g1-tabletop/SITE_ACCEPTANCE.zh-CN.md "$G1_SITE/logs/site-acceptance.md"
 ```
 
 | 路径 | 保存内容 |
 | --- | --- |
-| `$G1_REPO` | 当前版本源码 |
+| `$G1_REPO`，默认 `$HOME/phyagent` | 当前版本源码，Git 更新只在此目录进行 |
+| `$G1_SITE`，默认 `$HOME/g1-site` | 本机持久资料，独立于 Git 仓库 |
+| `$G1_SITE/venv/` | Linux Python 环境，不随源码推送或迁移 |
+| `$G1_SITE/config/runtime-env.sh` | 第 2.5 节生成的终端环境入口 |
 | `$G1_SITE/config/site.json` | 现场真实配置，使用绝对资产路径 |
 | `$G1_SITE/models/` | URDF、SRDF、完整 mesh 目录 |
 | `$G1_SITE/calibration/` | 原始配对数据、外参、TCP 测量与标记图片 |
 | `$G1_SITE/state/real/runtime.sqlite3` | 真实执行记录、占用和幂等状态，必须持久保留 |
 | `$G1_SITE/state/mock/runtime.sqlite3` | 独立 Mock 数据库 |
 | `$G1_SITE/feedback/` | 现场采集器生成的反馈文件 |
-| `$G1_SITE/logs/` | 部署快照、执行证据与验收记录 |
+| `$G1_SITE/logs/` | 部署快照、执行证据与 `site-acceptance.md` 验收记录 |
 
 不要把真实状态目录放在临时目录、容器临时层或每次发布都会删除的构建目录。所有运行/维护命令使用同一用户、同一状态路径。
 
@@ -151,7 +168,7 @@ python --version
 python -m pip install --upgrade pip
 ```
 
-如果已有经验证的 Conda/Python 3.11 环境，可使用它代替 uv；后续所有 Python、`paos` 和 Dora Node 必须指向同一环境。若系统禁止 `pip --user`，按 [uv 官方安装说明](https://docs.astral.sh/uv/getting-started/installation/)安装 uv，不修改系统 Python 的管理策略。
+以上创建环境命令用于首次安装；已有 `$G1_SITE/venv` 时直接激活，不重新创建。若系统禁止 `pip --user`，按 [uv 官方安装说明](https://docs.astral.sh/uv/getting-started/installation/)安装 uv，不修改系统 Python 的管理策略。如果使用已有且经验证的 Conda/Python 3.11 环境，需同步修改第 2.5 节的激活语句；所有 Python、`paos` 和 Dora Node 必须指向同一环境。
 
 ### 2.4 安装项目与原生库
 
@@ -181,6 +198,48 @@ PY
 Pinocchio 使用 pip 包名 `pin`，不是名为 `pinocchio` 的其他包。已验证的原生组合为 `pin 3.9.0 / coal 3.0.2 / eigenpy 3.12.0 / cmeel-urdfdom 4.0.1 / cmeel-tinyxml2 10.0.0 / numpy 2.3.5`。不能只升级其中一个库；`undefined symbol` 通常是 ABI 混配。
 
 首次安装需要网络。离线交付时，在相同 Linux 架构/Python 的已验证环境准备 wheelhouse、系统软件包和上游源码，另保存 `pip freeze`；仅复制 Node 归档无法替代这些依赖。
+
+### 2.5 保存环境，供每个新终端使用
+
+在上面已经设置 `G1_REPO` / `G1_SITE` 的终端执行一次。脚本保存实际绝对路径，并保留已存在的文件：
+
+```bash
+python - <<'PY'
+import os
+import shlex
+from pathlib import Path
+
+repo = Path(os.environ['G1_REPO']).resolve()
+site = Path(os.environ['G1_SITE']).resolve()
+target = site / 'config/runtime-env.sh'
+content = (
+    f'export G1_REPO={shlex.quote(str(repo))}\n'
+    f'export G1_SITE={shlex.quote(str(site))}\n'
+    'export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"\n'
+    'source "$G1_SITE/venv/bin/activate"\n'
+    'export CYCLONEDDS_HOME="$G1_SITE/upstream/cyclonedds/install"\n'
+    'export G1_REAL_CONFIG="$G1_SITE/config/site.json"\n'
+    'export G1_TABLETOP_STATE_DIR="$G1_SITE/state"\n'
+    'export LITELLM_LOCAL_MODEL_COST_MAP=True\n'
+)
+try:
+    with target.open('x', encoding='utf-8') as output:
+        output.write(content)
+    print('Created:', target)
+except FileExistsError:
+    print('Kept existing file; check its paths:', target)
+PY
+source "$G1_SITE/config/runtime-env.sh"
+```
+
+**后续每个新终端先执行下面两行，再运行本手册命令**；自选现场资料目录时替换第一行路径：
+
+```bash
+source "$HOME/g1-site/config/runtime-env.sh"
+cd "$G1_REPO"
+```
+
+此时 real 配置和 CycloneDDS 目录尚不存在是正常的，第 4–5 节才建立它们；设置路径不会连接设备或开启 real 模式。DDS 网卡按第 4.1 节核实后再填写，不在环境文件中预填机器人网卡。
 
 <a id="offline"></a>
 ## 3. 不接真机的运行验证
@@ -227,6 +286,8 @@ timedatectl status
 ```
 
 记录连接机器人网络的实际网卡，例如 `enp3s0`；G1 的 IP、子网、静态地址由现场网络决定，本手册不假设出厂地址。DDS 需要正确网卡、同一 domain、可达的发现/数据通信；能 ping 通不等于 DDS 已互通。VPN、Wi-Fi 优先路由、防火墙、多网卡均需检查，不要以关闭全部防火墙代替定位。
+
+确认后将 `export G1_DDS_INTERFACE=实际网卡名` 加到本机 `$G1_SITE/config/runtime-env.sh`，重新 source，并将同一网卡填入现场配置的 `hardware.interface`。环境变量供本手册诊断和服务命令使用，Gateway 读取 JSON 配置，不会用环境变量自动替换该字段。
 
 本版 BrainCo 上游服务固定 `domain_id=0`，所以当前部署 `hardware.domain_id` 也使用 0。项目配置虽然允许其他数字，但必须改造并重新验收手部服务后才能一起更改。
 
@@ -750,32 +811,21 @@ python -m http.server 18080 --bind 127.0.0.1 --directory dist/g1-linux-release-0
 保持静态服务器运行，另一个同环境终端安装：
 
 ```bash
+source "$HOME/g1-site/config/runtime-env.sh"
 cd "$G1_REPO"
 paos skill install g1-tabletop --index dist/g1-linux-release-001/index.yaml --yes
 paos skill inspect g1-tabletop
 ```
 
-归档包含 Node 源码和启动器，不包含解释器、原生库、模型或相机驱动。改源码后换新输出目录重建；不要以编辑已安装包绕过摘要校验。`--arch aarch64` 仅声明归档目标，不会把 x86_64 的依赖交叉编译成 ARM。
+归档包含 Node 源码和启动器，不包含解释器、原生库、模型或相机驱动。以上为首次安装；后续升级见第 9.6 节，换输出目录本身不能解决相同 artifact ID 的内容冲突。不要编辑已安装包绕过摘要校验。`--arch aarch64` 仅声明归档目标，不会把 x86_64 的依赖交叉编译成 ARM。
 
 ### 8.2 管理环境和启动 profile
 
-在 `$G1_SITE/config/runtime-env.sh` 保存本机环境，例如下面文件内容；将路径替换成实际绝对路径：
+使用第 2.5 节保存的环境；若 Dora 安装器给出了其他二进制目录，把它加入该环境文件的 PATH。每次从此环境启动管理进程：
 
 ```bash
-export G1_REPO=/home/robot/PhyAgentOS-core
-export G1_SITE=/home/robot/g1-site
-source "$G1_SITE/venv/bin/activate"
-export CYCLONEDDS_HOME="$G1_SITE/upstream/cyclonedds/install"
-export G1_REAL_CONFIG="$G1_SITE/config/site.json"
-export G1_TABLETOP_STATE_DIR="$G1_SITE/state"
-export G1_DDS_INTERFACE=enp3s0
-export LITELLM_LOCAL_MODEL_COST_MAP=True
-```
-
-每次从该环境启动管理进程：
-
-```bash
-source /home/robot/g1-site/config/runtime-env.sh
+source "$HOME/g1-site/config/runtime-env.sh"
+cd "$G1_REPO"
 command -v python3
 command -v paos
 command -v dora
@@ -822,7 +872,7 @@ paos agent -m "检查当前 g1-tabletop Skill 的工具、运行模式、标定�
 通过后才在有操作员值守的条件下给出明确按钮/物体任务，如“用右手按一次 button_01，报告真实反馈；结果不确定则停止并报告”。确认 Agent 使用 observe→action→result，并读取最终事实。不要让 Agent 直接运行 SDK 脚本、调整增益或修改现场配置。
 
 <a id="operations"></a>
-## 9. 日常启动、停机与恢复
+## 9. 日常启动、停机、更新与恢复
 
 ### 9.1 启动顺序
 
@@ -888,6 +938,54 @@ git -C "$G1_REPO" rev-parse HEAD > "$G1_SITE/backups/project-$G1_BACKUP_ID.commi
 
 首次接机不部署无条件开机自动动作或进程失败自动重启。若后续交给 systemd，另验收启动顺序、环境继承、串口权限、控制权交接与退出信号；尤其 BrainCo 服务重启会重新发送默认手型。
 
+### 9.6 从个人仓库更新已部署代码
+
+先按第 9.2 节正常停机，并按第 9.5 节备份。当前为 editable 安装，源码变化会影响随后启动的 Python 进程；不要边执行任务边 `git pull`。确保独立 Gateway 或托管 Skill 已停止，再在部署用户终端执行：
+
+```bash
+source "$HOME/g1-site/config/runtime-env.sh"
+cd "$G1_REPO"
+git remote get-url origin
+git branch --show-current
+git status --short
+git rev-parse HEAD
+```
+
+确认 remote 指向 `zztyac/phyagent`、当前仍在 `codex/g1-console-pick-runtime` 且无本地改动，然后执行以下块。块内再次检查分支和工作区；失败时先处理差异，不用强制覆盖：
+
+```bash
+(
+  set -eu
+  test "$(git branch --show-current)" = codex/g1-console-pick-runtime
+  test -z "$(git status --porcelain)"
+  G1_BEFORE_UPDATE="$(git rev-parse HEAD)"
+  git pull --ff-only origin codex/g1-console-pick-runtime
+  git diff --stat "$G1_BEFORE_UPDATE" HEAD
+  git log -1 --oneline
+  git rev-parse HEAD > "$G1_SITE/logs/project.commit"
+)
+```
+
+查看本次变更与新版手册。如果只是文档更新，无须重装依赖或重建 Node。若运行时代码或依赖变化，先在独立验证环境检查，再停机应用；按第 2.4 节约束重新执行项目安装和 `pip check`，SDK/原生库只按已审查的新版本调整。不要自动 `pip install --upgrade` 全部依赖。
+
+独立 Gateway 从 editable 源码加载；完成更新后，在已激活环境中验证：
+
+```bash
+cd "$G1_REPO"
+python -m pip check
+python -m g1_tabletop demo
+python -m g1_tabletop doctor --config integrations/g1-tabletop/config/mock.json
+python -m pytest integrations/g1-tabletop/tests -q
+```
+
+以上均为离线检查。已完成实机配置时，再运行 `doctor --config "$G1_REAL_CONFIG"`，重新做第 7 节只读核验；涉及几何、控制、阈值或配置语义的变化应重新做对应现场验收，不能仅凭旧的 `commissioned=true` 放行。
+
+**托管 Skill 的 Node 是安装时的源码快照，`git pull` 不会更新它。** 当前 `build_bundle.py` 固定 Skill/Node 版本为 `0.1.0`，Node artifact ID 为 `g1-tabletop-node-0.1.0-linux-<arch>`。Node 内容变化但 ID 不变时，安装器会报 `installed node artifact ID has different contents`；换 `dist/` 输出目录也不能解决。
+
+因此，托管 Node 代码升级需先提供新的版本与唯一 artifact ID 的发布包，在新目录构建并记录归档 SHA-256，然后通过对应的静态索引执行 `paos skill update g1-tabletop --index <新发布目录>/index.yaml --yes`。当前脚本没有版本参数，发布方需先更新构建脚本中的版本/ID并验证产物；在此之前保留原托管版本，不将新 clone 的提交号误记成已安装 Node 版本。不删除安装目录、收据或哈希锁来强行替换。升级时所有托管 Skill 均应停止，索引中的 HTTP 下载地址应可访问；安装后先跑 Mock，再按第 8.2 节恢复 real profile。
+
+`$G1_SITE` 始终保留现场配置、模型、标定、反馈和**最新执行状态**。更新代码不重新复制模板覆盖 `site.json`，不删除数据库；若字段结构变化，对照新版模板逐项迁移并留下记录。回滚遵循第 9.5 节，不使用 `git reset --hard` 清理现场修改。
+
 <a id="acceptance"></a>
 ## 10. 排查、验收与交付
 
@@ -895,6 +993,10 @@ git -C "$G1_REPO" rev-parse HEAD > "$G1_SITE/backups/project-$G1_BACKUP_ID.commi
 
 | 现象 / 错误 | 检查顺序 |
 | --- | --- |
+| clone 后没有 `integrations/g1-tabletop` | 核对 `origin` 为个人仓库、分支为 `codex/g1-console-pick-runtime`，不要使用上游 `v1.1.0` 标签 |
+| 新终端找不到命令、配置或模型 | 先 source 第 2.5 节环境文件，再核对 `G1_REPO` / `G1_SITE` 的实际路径 |
+| `git pull` 后托管 Node 行为没有改变 | Node 使用已安装归档；按第 9.6 节核对 artifact ID / SHA，不能只看源码 HEAD |
+| `installed node artifact ID has different contents` | 同一 Node ID 被用于不同内容，需要新的版本化发布包；不删收据绕过校验 |
 | `real mode requires commissioned...`、null 校验错误 | 还在草稿或现场数据未齐；完成准备审查，不拿 Mock 冒充测量 |
 | `No module named ...` | 检查当前 Python 与 Dora daemon PATH；Node 不含依赖 |
 | `undefined symbol`、找不到 urdfdom/coal 库 | 恢复原生版本组合，检查其他 ROS/Conda/SDK 的库路径干扰 |

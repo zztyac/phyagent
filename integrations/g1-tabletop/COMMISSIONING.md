@@ -4,6 +4,21 @@
 
 代码可离线验证；下列测量必须在硬件、面板安装和作业布局确定后完成。`config/mock.json` 只用于模拟，不能修改 `mode` 后直接用于实机。
 
+## 开始接机前
+
+从 [zztyac/phyagent](https://github.com/zztyac/phyagent) 的 `codex/g1-console-pick-runtime` 分支直接 clone，按 [Linux 手册第 2–4 节](DEPLOYMENT_LINUX.zh-CN.md#linux)完成环境、Mock 和设备准备。默认源码目录为 `~/phyagent`，现场目录为 `~/g1-site`。下列命令使用该手册生成的环境文件，每个新终端先执行：
+
+```bash
+source "$HOME/g1-site/config/runtime-env.sh"
+cd "$G1_REPO"
+git remote get-url origin
+git branch --show-current
+git rev-parse HEAD
+mkdir -p "$G1_SITE/calibration"
+```
+
+真实配置位于 `$G1_REAL_CONFIG`，模型、标定和状态分别保存在 `$G1_SITE/models`、`$G1_SITE/calibration`、`$G1_TABLETOP_STATE_DIR`。按手册第 5.1 节从模板建立配置草稿，填写现场测量值，不把配置写回仓库模板。将提交号、环境路径和原始测量证据记录在 `$G1_SITE/logs/site-acceptance.md`。源码更新后按手册第 9.6 节复核，不能用重新 clone 或清空数据库替代恢复。
+
 ## 坐标、单位和手型
 
 全系统长度 m、角度 rad，`Pose.quaternion_xyzw` 为单位四元数，变换 `A_to_B` 表示 B 坐标在 A 中的位姿：`T_base_target = T_base_camera @ T_camera_marker @ T_marker_target`。G1 base 为固定基座 URDF 根节点；不是世界地图。IMU 单独使用 Unitree 原生 **wxyz** 顺序。
@@ -19,9 +34,9 @@
 ## 标记和相机
 
 ```bash
-python -m g1_tabletop marker --id 0 --pixels 600 --output dist/panel-marker.png
-python -m g1_tabletop marker --id 1 --pixels 600 --output dist/object-marker.png
-python -m g1_tabletop marker --id 2 --pixels 600 --output dist/placement-marker.png
+python -m g1_tabletop marker --id 0 --pixels 600 --output "$G1_SITE/calibration/panel.png"
+python -m g1_tabletop marker --id 1 --pixels 600 --output "$G1_SITE/calibration/object.png"
+python -m g1_tabletop marker --id 2 --pixels 600 --output "$G1_SITE/calibration/placement.png"
 ```
 
 使用 DICT_4X4_50，ID 不得重复。打印后实际测量黑色正方形边长填 `size_m`，不要把白边计入；输出像素数不代表物理尺寸。面板标记和按钮位置刚性关联；不能把标记贴在会动的按键上。物体与放置区分别有自己的标记。
@@ -31,8 +46,12 @@ python -m g1_tabletop marker --id 2 --pixels 600 --output dist/placement-marker.
 离线标定命令：
 
 ```bash
-python -m g1_tabletop calibrate --mount wrist --input left-pairs.json --output left-wrist-camera.json
-python -m g1_tabletop calibrate --mount base --input head-pairs.json --output base-head-camera.json
+python -m g1_tabletop calibrate --mount wrist \
+  --input "$G1_SITE/calibration/left-pairs.json" --output "$G1_SITE/calibration/left-camera.json"
+python -m g1_tabletop calibrate --mount wrist \
+  --input "$G1_SITE/calibration/right-pairs.json" --output "$G1_SITE/calibration/right-camera.json"
+python -m g1_tabletop calibrate --mount base \
+  --input "$G1_SITE/calibration/head-pairs.json" --output "$G1_SITE/calibration/head-camera.json"
 ```
 
 输入统一形状：

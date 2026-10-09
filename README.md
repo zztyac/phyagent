@@ -34,6 +34,8 @@
 
 **PhyAgentOS is a Recursive Self-Improvement (RSI) framework for embodied agents.** It connects cognitive planning, Physical Execution, and task verification in a runtime-wide feedback loop, improving Skills and Lessons from verified experience for future tasks.
 
+This fork, [zztyac/phyagent](https://github.com/zztyac/phyagent), adds G1 EDU console-button and pick/place execution on branch `codex/g1-console-pick-runtime`. For Linux deployment, start with the [deployment and hardware commissioning guide (Chinese)](integrations/g1-tabletop/DEPLOYMENT_LINUX.zh-CN.md) and [site acceptance record](integrations/g1-tabletop/SITE_ACCEPTANCE.zh-CN.md). The G1 runtime can run through its direct API without a VLA or model API key.
+
 ![PhyAgentOS architecture: cognitive planning, physical execution, and the recursive self-improvement loop](docs/imgs/runtime-control-modes.png)
 
 <a id="why"></a>
@@ -63,13 +65,13 @@ See the [full changelog](CHANGELOG.md) and [changes since v1.0.0](https://github
 <a id="quick-start"></a>
 ## Quickstart · How to get started
 
-Start with a model-backed CLI conversation, then connect a robot or simulator Skill below. **Prerequisites:** Python 3.11 or 3.12, Git, and an API key for your model provider.
+For G1 deployment, follow the [Linux guide](integrations/g1-tabletop/DEPLOYMENT_LINUX.zh-CN.md#linux), which uses a persistent environment at `~/g1-site/venv`. The generic CLI quickstart below is optional for G1: it starts a model-backed conversation and requires Python 3.11 or 3.12, Git, and a model-provider API key. If you already cloned this branch and installed the G1 environment, reuse it and skip cloning and creating another environment.
 
 ### 1. Install and initialize
 
 ```bash
-git clone --branch v1.1.0 https://github.com/PhyAgentOS/PhyAgentOS-core.git
-cd PhyAgentOS-core
+git clone --depth 1 --branch codex/g1-console-pick-runtime https://github.com/zztyac/phyagent.git phyagent
+cd phyagent
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
